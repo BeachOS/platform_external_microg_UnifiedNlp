@@ -1,0 +1,73 @@
+/*
+ * SPDX-FileCopyrightText: 2013, microG Project Team
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+buildscript {
+    ext.kotlinVersion = '1.6.10'
+    ext.coroutineVersion = '1.5.2'
+
+    ext.appcompatVersion = '1.4.0'
+    ext.fragmentVersion = '1.4.0'
+    ext.lifecycleVersion = '2.4.0'
+    ext.navigationVersion = '2.3.5'
+    ext.preferenceVersion = '1.1.1'
+    ext.recyclerviewVersion = '1.2.0'
+
+    ext.androidBuildGradleVersion = '7.0.4'
+
+    ext.androidBuildVersionTools = '30.0.2'
+
+    ext.androidMinSdk = 9
+    ext.androidTargetSdk = 29
+    ext.androidCompileSdk = 31
+
+    repositories {
+        jcenter()
+        google()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:$androidBuildGradleVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+String gitDescribeVersion() {
+    def stdout = new ByteArrayOutputStream()
+    if (rootProject.file("gradlew").exists())
+        exec { commandLine 'git', 'describe', '--tags', '--always', '--dirty'; standardOutput = stdout }
+    else // automatic build system, don't tag dirty
+        exec { commandLine 'git', 'describe', '--tags', '--always'; standardOutput = stdout }
+    return stdout.toString().trim().substring(1)
+}
+
+int gitCountCommits() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-list', '--count', "HEAD"
+        standardOutput = stdout
+    }
+    return Integer.parseInt(stdout.toString().trim())
+}
+
+allprojects {
+    apply plugin: 'idea'
+
+    group = 'org.microg.nlp'
+    version = gitDescribeVersion()
+    ext.appVersionCode = gitCountCommits()
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:deprecation"
+        }
+    }
+}
+
+subprojects {
+    repositories {
+        jcenter()
+        google()
+    }
+}

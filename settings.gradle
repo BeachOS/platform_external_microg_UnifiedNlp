@@ -1,0 +1,22 @@
+/*
+ * SPDX-FileCopyrightText: 2015, microG Project Team
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+include ':api'
+include ':service'
+include ':service-api'
+include ':compat'
+include ':client'
+include ':location-v1'
+include ':location-v2'
+include ':location-v3'
+include ':geocode-v1'
+
+include ':ui'
+
+//include ':service-app'
+//include ':client-app'
+//include ':app'
+
+include ':docs:backend-sample'
